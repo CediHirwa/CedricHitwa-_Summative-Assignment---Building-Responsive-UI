@@ -1,0 +1,174 @@
+/**
+ * CAMPUS FLOW - COMPONENT LIBRARY
+ * Focus: High-fidelity modals, sophisticated manifesto, and balance charts.
+ */
+
+/* --- 1. MODALS & GLASS OVERLAYS --- */
+.glass-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    z-index: 250;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+
+.modal-content {
+    background: white;
+    width: 100%;
+    max-width: 650px;
+    max-height: 85vh;
+    border-radius: 3.5rem;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 30px 60px -12px rgba(15, 23, 42, 0.3);
+    animation: modalIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes modalIn {
+    from { transform: scale(0.95) translateY(30px); opacity: 0; }
+    to { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.modal-header {
+    padding: 2rem 3rem;
+    border-bottom: 1px solid var(--border-slate);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(to right, var(--bg-slate), white);
+}
+
+.modal-header h3 {
+    font-size: 1.25rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: var(--grad-navy);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.scroll-form {
+    padding: 3rem;
+    overflow-y: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+}
+
+/* --- 2. ABOUT & MANIFESTO --- */
+.manifesto-hero {
+    text-align: center;
+    padding: 8rem 2rem;
+    background: linear-gradient(180deg, white 0%, var(--bg-slate) 100%);
+    border-radius: 4rem;
+    border: 1px solid var(--border-slate);
+    margin-bottom: 4rem;
+}
+
+.manifesto-hero h1 {
+    font-size: 5.5rem;
+    font-weight: 900;
+    letter-spacing: -0.06em;
+    line-height: 0.9;
+    margin-bottom: 1.5rem;
+}
+
+.manifesto-hero .subtitle {
+    font-size: 1.6rem;
+    color: var(--slate-400);
+    max-width: 750px;
+    margin: 0 auto;
+    font-weight: 500;
+}
+
+.principles-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem;
+    margin-bottom: 5rem;
+}
+
+.principle-card {
+    background: white;
+    padding: 3.5rem 2.5rem;
+    border-radius: 3rem;
+    border: 1px solid var(--border-slate);
+    text-align: center;
+    transition: var(--transition);
+}
+
+.principle-card:hover { transform: translateY(-10px); box-shadow: var(--shadow-md); border-color: var(--teal); }
+.principle-card i { font-size: 3rem; color: var(--teal); margin-bottom: 2rem; }
+
+/* --- 3. CREATOR CARD --- */
+.creator-card {
+    display: flex;
+    gap: 5rem;
+    align-items: center;
+    background: white;
+    padding: 5rem;
+    border-radius: 4rem;
+    border: 1px solid var(--border-slate);
+    position: relative;
+    overflow: hidden;
+}
+
+.creator-card img {
+    width: 250px;
+    height: 250px;
+    border-radius: 4rem;
+    object-fit: cover;
+    border: 12px solid var(--bg-slate);
+    box-shadow: var(--shadow-sm);
+}
+
+.creator-info h2 { font-size: 3.5rem; font-weight: 900; letter-spacing: -0.04em; }
+
+.creator-title {
+    display: block;
+    color: var(--teal-dark);
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    margin: 0.5rem 0 2rem;
+    letter-spacing: 0.15em;
+}
+
+/* --- 4. STATISTICS & BALANCE --- */
+.balance-container {
+    background: white;
+    padding: 4rem;
+    border-radius: 4rem;
+    border: 1px solid var(--border-slate);
+    width: 100%;
+    margin-top: 2rem;
+}
+
+.balance-bar-track {
+    height: 14px;
+    background: var(--bg-slate);
+    border-radius: 99px;
+    position: relative;
+    margin: 2.5rem 0;
+    overflow: hidden;
+}
+
+.balance-fill-left {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    background: var(--grad-navy);
+    border-radius: 99px 0 0 99px;
+}
+
+.balance-fill-right {
+    position: absolute; right: 0; top: 0; bottom: 0;
+    background: var(--grad-teal);
+    border-radius: 0 99px 99px 0;
+}

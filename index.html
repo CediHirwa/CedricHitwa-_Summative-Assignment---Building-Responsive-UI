@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Flow | Personal OS Registry</title>
+    <meta name="description" content="A premium campus life planner focusing on capacity awareness and flow management.">
+    
+    <!-- External Assets -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Design System - Modular CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+
+    <!-- Accessibility: Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Global Navigation -->
+    <header role="banner" class="global-header">
+        <div class="max-container header-inner">
+            <div class="logo-area" onclick="location.hash='#dashboard'">
+                <img src="assets/logo.png" alt="Campus Flow Logo" class="logo-img" onerror="this.src='https://ui-avatars.com/api/?name=CF&background=1e293b&color=fff'">
+                <h1 class="logo-text">Campus <span class="brand-flow">Flow</span></h1>
+            </div>
+
+            <nav role="navigation" aria-label="Main Navigation">
+                <ul class="nav-links" style="display: flex; list-style: none; gap: 3rem;">
+                    <li>
+                        <button class="nav-item active" data-view="dashboard">
+                            Dashboard
+                            <div class="nav-indicator"></div>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="nav-item" data-view="planner">
+                            Planner
+                            <div class="nav-indicator"></div>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="nav-item" data-view="calendar">
+                            Calendar
+                            <div class="nav-indicator"></div>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="nav-item" data-view="stats">
+                            Statistics
+                            <div class="nav-indicator"></div>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="nav-item" data-view="settings">
+                            Settings
+                            <div class="nav-indicator"></div>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="nav-item" data-view="about">
+                            About
+                            <div class="nav-indicator"></div>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main id="main-content" role="main" class="max-container">
+        
+        <!-- View Introduction: Dynamically updated by JS -->
+        <header class="view-intro">
+            <div id="view-meta">
+                <h2 id="view-title">Dashboard</h2>
+                <p id="view-desc">Centered on your current focus and workload intensity.</p>
+            </div>
+            
+            <div class="header-actions" style="display: flex; gap: 1rem; align-items: center;">
+                <div id="search-wrapper" class="search-input-group">
+                    <i class="fa-solid fa-magnifying-glass" style="color: var(--slate-400);"></i>
+                    <input type="text" id="global-search" placeholder="Search your flow..." aria-label="Search Registry">
+                </div>
+                <button class="btn-primary" id="open-add-modal">+ New Activity</button>
+            </div>
+        </header>
+
+        <!-- ARIA Live region for capacity announcements -->
+        <div id="capacity-announcer" role="status" aria-live="polite" class="sr-only"></div>
+        
+        <!-- View Content Mount Point -->
+        <div id="view-container">
+            <!-- JavaScript populates this area (Dashboard, Planner, etc.) -->
+        </div>
+    </main>
+
+    <!-- REGISTRY LOG MODAL -->
+    <div id="modal-overlay" class="glass-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-header-title">
+        <div class="modal-content">
+            <header class="modal-header">
+                <h3 id="modal-header-title">Log Activity</h3>
+                <button class="btn-close" id="close-modal" aria-label="Close" style="background: none; border: none; cursor: pointer; font-size: 1.5rem; color: var(--slate-400);">&times;</button>
+            </header>
+            
+            <form id="activity-form" class="scroll-form">
+                <input type="hidden" id="task-id">
+                
+                <div class="form-group" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <label for="act-title" style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: var(--slate-400);">Activity Title</label>
+                    <input type="text" id="act-title" required placeholder="e.g. Deep Work Research" style="padding: 1rem; border-radius: 1rem; border: 1px solid var(--border-slate); font-family: inherit; font-weight: 600;">
+                </div>
+
+                <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <div class="form-group" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <label for="act-date" style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: var(--slate-400);">Date</label>
+                        <input type="date" id="act-date" required style="padding: 1rem; border-radius: 1rem; border: 1px solid var(--border-slate); font-family: inherit; font-weight: 600;">
+                    </div>
+                    <div class="form-group" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <label for="act-category" style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: var(--slate-400);">Category</label>
+                        <select id="act-category" style="padding: 1rem; border-radius: 1rem; border: 1px solid var(--border-slate); font-family: inherit; font-weight: 600; background: white;">
+                            <!-- Populated from State -->
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <div class="form-group" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <label for="act-time" style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: var(--slate-400);">Start Time</label>
+                        <input type="time" id="act-time" required style="padding: 1rem; border-radius: 1rem; border: 1px solid var(--border-slate); font-family: inherit; font-weight: 600;">
+                    </div>
+                    <div class="form-group" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <label for="act-duration" style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: var(--slate-400);">Duration (Hrs)</label>
+                        <input type="number" id="act-duration" step="0.25" min="0.25" value="1.0" style="padding: 1rem; border-radius: 1rem; border: 1px solid var(--border-slate); font-family: inherit; font-weight: 600;">
+                    </div>
+                </div>
+
+                <div class="form-group-check" style="display: flex; align-items: center; gap: 0.75rem;">
+                    <input type="checkbox" id="act-urgent" style="width: 1.25rem; height: 1.25rem; cursor: pointer;">
+                    <label for="act-urgent" style="font-weight: 700; font-size: 0.9rem;">Mark as Critical Now Priority</label>
+                </div>
+
+                <div class="form-group" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <label for="act-status" style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: var(--slate-400);">Current Status</label>
+                    <select id="act-status" style="padding: 1rem; border-radius: 1rem; border: 1px solid var(--border-slate); font-family: inherit; font-weight: 600; background: white;">
+                        <option value="not-started">Not Started</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                        <option value="canceled">Canceled</option>
+                    </select>
+                </div>
+
+                <div id="cancel-reason-container" class="form-group hidden" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <label for="act-cancel-reason" style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: var(--orange);">Registry Deviation Justification</label>
+                    <textarea id="act-cancel-reason" placeholder="Why the deviation? Sustainable flow requires accountability." style="padding: 1rem; border-radius: 1rem; border: 1px solid var(--orange); font-family: inherit; font-weight: 500; min-height: 80px;"></textarea>
+                </div>
+
+                <div class="form-group" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <label for="act-notes" style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: var(--slate-400);">Session Notes</label>
+                    <textarea id="act-notes" placeholder="Session outcomes or reflections..." style="padding: 1rem; border-radius: 1rem; border: 1px solid var(--border-slate); font-family: inherit; font-weight: 500; min-height: 80px;"></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit" style="padding: 1.25rem; background: var(--grad-navy); color: white; border: none; border-radius: 1.25rem; font-weight: 900; font-size: 1rem; cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 1rem;">Save Registry Entry</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- CALENDAR DAY DETAIL OVERLAY -->
+    <div id="calendar-day-overlay" class="glass-overlay hidden">
+        <div class="modal-content" style="max-width: 500px;">
+            <header class="modal-header">
+                <h3 id="overlay-date-title">Date Details</h3>
+                <button id="close-calendar-overlay" class="btn-close">&times;</button>
+            </header>
+            <div id="overlay-task-list" class="scroll-form" style="gap: 1rem;">
+                <!-- Dynamically filled with task cards for that day -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Orchestration Script -->
+    <script type="module" src="scripts/main.js"></script>
+</body>
+</html>
