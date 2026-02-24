@@ -1,6 +1,10 @@
 # Campus Flow — Academic Operating System
 
-**Live Demo:** 
+**Live Demo:** [Watch the 3-Minute Demo Video](INSERT_YOUR_YOUTUBE_OR_DRIVE_LINK_HERE)
+
+**Live Site:** [https://cedihirwa.github.io/CedricHitwa-_Summative-Assignment---Building-Responsive-UI/](https://cedihirwa.github.io/CedricHitwa-_Summative-Assignment---Building-Responsive-UI/)
+
+**Project Concept Note:** [View Detailed Concept & Design Document](https://docs.google.com/document/d/1pBkDmfUjDEaZ33oYISee9em3C8SJqfPJJ1KSD8Zt0CU/edit?usp=sharing)
 
 Campus Flow is a responsive, accessible, vanilla JavaScript web application designed to help students manage academic workload through energy management and workload intensity tracking.
 
