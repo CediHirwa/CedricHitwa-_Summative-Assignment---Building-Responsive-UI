@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Flow — Your Academic Operating System</title>
+  <meta name="description" content="Campus Flow helps students manage academic workload with intention and clarity.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles/main.css">
+</head>
+<body>
+
+<div aria-live="polite"    aria-atomic="true" id="status-msg" class="sr-only"></div>
+<div aria-live="assertive" aria-atomic="true" id="alert-msg"  class="sr-only"></div>
+
+<a class="skip-link" href="#main-content">Skip to main content</a>
+
+<!-- ── HEADER ──────────────────────────────────────────────────── -->
+<header class="site-header" role="banner">
+  <div class="header-inner">
+    <a href="#dashboard" class="logo" aria-label="Campus Flow home">
+      <div class="logo-badge" aria-hidden="true">CF</div>
+      <span class="logo-text">Campus <span>Flow</span></span>
+    </a>
+
+    <button class="burger" id="burger" aria-expanded="false" aria-controls="nav-menu" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+
+    <nav id="nav-menu" aria-label="Primary navigation">
+      <ul class="nav-list" role="list">
+        <li><a class="nav-link active" href="#dashboard" data-view="dashboard" aria-current="page">Dashboard</a></li>
+        <li><a class="nav-link" href="#planner"  data-view="planner">Planner</a></li>
+        <li><a class="nav-link" href="#calendar" data-view="calendar">Calendar</a></li>
+        <li><a class="nav-link" href="#stats"    data-view="stats">Stats</a></li>
+        <li><a class="nav-link" href="#settings" data-view="settings">Settings</a></li>
+        <li><a class="nav-link" href="#about"    data-view="about">About</a></li>
+      </ul>
+    </nav>
+
+    <div class="header-actions">
+      <button class="btn-primary btn-new-activity">+ New Activity</button>
+    </div>
+  </div>
+</header>
+
+<!-- ── MAIN ────────────────────────────────────────────────────── -->
+<main class="site-main" id="main-content">
+
+  <!-- DASHBOARD -->
+  <section id="dashboard" aria-labelledby="dash-title">
+    <div class="page-hdr page-hdr-row">
+      <div>
+        <p class="page-eyebrow">Workload Evaluator</p>
+        <h1 class="page-title" id="dash-title">Today's Intensity</h1>
+        <p class="page-sub" id="date-display"></p>
+      </div>
+      <button class="btn-primary btn-new-activity">+ New Activity</button>
+    </div>
+
+    <div class="heat-hero">
+      <div class="heat-row">
+        <div>
+          <p class="heat-eyebrow">Optima Flow</p>
+          <p class="heat-status" id="heat-status">Optimal Flow</p>
+        </div>
+        <div style="text-align:right">
+          <p class="heat-counter" id="heat-hrs">0.0h</p>
+          <p class="heat-unit">of daily cap</p>
+        </div>
+      </div>
+      <div class="heat-track" role="progressbar" aria-label="Daily capacity used"
+           aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="heat-progress">
+        <div class="heat-fill" id="heat-fill"></div>
+      </div>
+      <p class="cap-message cap-ok" id="cap-message" aria-live="polite">Loading…</p>
+    </div>
+
+    <div class="today-stats">
+      <div class="stat-card"><p class="stat-card-label">Today's Tasks</p><p class="stat-card-value" id="today-total">0</p></div>
+      <div class="stat-card"><p class="stat-card-label">Completed</p><p class="stat-card-value teal" id="today-completed">0</p></div>
+      <div class="stat-card"><p class="stat-card-label">Hours Today</p><p class="stat-card-value" id="today-hrs">0.0h</p></div>
+      <div class="stat-card"><p class="stat-card-label">Top Tag</p><p class="stat-card-value" id="today-tag">—</p></div>
+    </div>
+
+    <div class="dash-cols">
+      <div class="dash-left">
+        <div class="card card-pad" style="margin-bottom:1.25rem">
+          <p class="section-eyebrow">Today's Priorities</p>
+          <div id="today-list" role="list"><p class="empty-hint">Loading…</p></div>
+        </div>
+        <div role="region" aria-label="Weekly cadence">
+          <p class="section-eyebrow" style="margin-bottom:.6rem">Weekly Cadence</p>
+          <div class="cadence-row" id="weekly-cadence"></div>
+        </div>
+      </div>
+
+      <div class="dash-right">
+        <div class="urgent-panel">
+          <button class="urgent-toggle" id="urgent-toggle" aria-expanded="false" aria-controls="urgent-body">
+            <span style="display:flex;align-items:center;gap:.5rem">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+              Urgent Tasks
+              <span class="urgent-badge" id="urgent-count" style="display:none">0</span>
+            </span>
+            <svg class="chevron-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="urgent-body" id="urgent-body">
+            <div class="urgent-content" id="urgent-content" role="list">
+              <p class="empty-hint" style="padding:.75rem">No urgent tasks.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLANNER -->
+  <section id="planner" aria-labelledby="planner-title" hidden>
+    <div class="page-hdr page-hdr-row">
+      <div>
+        <p class="page-eyebrow">Activity Log</p>
+        <h1 class="page-title" id="planner-title">Planner</h1>
+      </div>
+      <button class="btn-primary btn-new-activity">+ New Activity</button>
+    </div>
+
+    <div class="planner-toolbar" role="search">
+      <div class="search-wrap">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="search" id="search-input" placeholder="Search by regex or keyword…"
+               aria-label="Search activities" autocomplete="off" spellcheck="false"
+               style="flex:1;border:none;outline:none;background:transparent;font-family:var(--f-body);font-size:.875rem;color:var(--text)">
+      </div>
+      <button class="btn-sm" id="btn-case" aria-pressed="false" title="Toggle case sensitivity">Aa</button>
+      <button class="btn-sm" id="btn-clear-search">✕ Clear</button>
+      <select id="filter-tag" aria-label="Filter by tag"><option value="">All Tags</option></select>
+      <span id="record-count" aria-live="polite" aria-atomic="true">0 records</span>
+    </div>
+    <p id="search-error" role="alert" hidden style="font-size:.75rem;color:var(--red);margin-bottom:.75rem">Invalid regex pattern.</p>
+
+    <div class="card table-wrap">
+      <table aria-label="Activities">
+        <thead>
+          <tr>
+            <th data-sort="title"    tabindex="0" aria-sort="none">Title <span class="sort-icon">⇅</span></th>
+            <th data-sort="dueDate"  tabindex="0" aria-sort="ascending">Due Date <span class="sort-icon">↑</span></th>
+            <th data-sort="duration" tabindex="0" aria-sort="none">Duration <span class="sort-icon">⇅</span></th>
+            <th>Tag</th><th>Status</th><th>Urgent</th>
+            <th><span class="sr-only">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody id="records-tbody">
+          <tr><td colspan="7" class="empty-state">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- CALENDAR -->
+  <section id="calendar" aria-labelledby="cal-heading" hidden>
+    <div class="cal-nav">
+      <div>
+        <p class="page-eyebrow">Monthly View</p>
+        <h1 class="page-title" id="cal-heading">Calendar</h1>
+      </div>
+      <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">
+        <h2 class="cal-title" id="cal-title" aria-live="polite">Loading…</h2>
+        <div class="cal-nav-btns">
+          <button class="cal-btn" id="cal-prev" aria-label="Previous month">&#8592;</button>
+          <button class="cal-btn" id="cal-today" aria-label="Go to today">Today</button>
+          <button class="cal-btn" id="cal-next"  aria-label="Next month">&#8594;</button>
+        </div>
+      </div>
+    </div>
+    <div class="cal-container">
+      <div class="cal-weekdays">
+        <div class="cal-weekday">Sun</div><div class="cal-weekday">Mon</div>
+        <div class="cal-weekday">Tue</div><div class="cal-weekday">Wed</div>
+        <div class="cal-weekday">Thu</div><div class="cal-weekday">Fri</div>
+        <div class="cal-weekday">Sat</div>
+      </div>
+      <div id="cal-grid"></div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section id="stats" aria-labelledby="stats-title" hidden>
+    <div class="page-hdr">
+      <p class="page-eyebrow">Performance Overview</p>
+      <h1 class="page-title" id="stats-title">Statistics</h1>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card"><p class="stat-card-label">Total Activities</p><p class="stat-card-value" id="stat-total2">0</p></div>
+      <div class="stat-card"><p class="stat-card-label">Completed</p><p class="stat-card-value teal" id="stat-completed2">0</p></div>
+      <div class="stat-card"><p class="stat-card-label">Total Logged</p><p class="stat-card-value" id="stat-sum2">0h</p></div>
+      <div class="stat-card"><p class="stat-card-label">Top Tag</p><p class="stat-card-value" id="stat-top-tag2">—</p></div>
+    </div>
+    <div class="balance-stats-grid">
+      <div class="card card-pad">
+        <p class="section-eyebrow">Completion Balance</p>
+        <div class="ring-wrap">
+          <div style="position:relative;flex-shrink:0">
+            <svg class="ring-svg" viewBox="0 0 36 36" aria-hidden="true">
+              <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    fill="none" stroke="#f1f5f9" stroke-width="3.8"/>
+              <path id="balance-ring"
+                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    fill="none" stroke="var(--teal)" stroke-width="3.8" stroke-linecap="round"
+                    stroke-dasharray="0, 100"
+                    style="transition:stroke-dasharray 1s cubic-bezier(.4,0,.2,1)"/>
+            </svg>
+            <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+              <span style="font-family:var(--f-head);font-weight:800;font-size:1.3rem;color:var(--navy)" id="balance-perc">0%</span>
+              <span class="ring-label">done</span>
+            </div>
+          </div>
+          <div style="flex:1;min-width:0">
+            <p class="ring-label" style="margin-bottom:.6rem">Tag Breakdown</p>
+            <div class="balance-legend" id="balance-legend"></div>
+          </div>
+        </div>
+      </div>
+      <div class="card-dark card-pad">
+        <p class="section-eyebrow" style="color:rgba(255,255,255,.3)">Accountability</p>
+        <div class="metric-row">
+          <div class="metric-label"><span>Reliability</span><span id="m-reliability">0%</span></div>
+          <div class="metric-bar-track"><div class="metric-bar-fill" id="m-reliability-bar" style="background:var(--teal);width:0%"></div></div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-label"><span>Overuse Days</span><span id="m-overuse">0%</span></div>
+          <div class="metric-bar-track"><div class="metric-bar-fill" id="m-overuse-bar" style="background:var(--orange);width:0%"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section id="settings" aria-labelledby="settings-title" hidden>
+    <div class="page-hdr">
+      <p class="page-eyebrow">Preferences</p>
+      <h1 class="page-title" id="settings-title">Settings</h1>
+    </div>
+    <div class="settings-grid">
+      <div class="card card-pad">
+        <h2 class="settings-title">Daily Workload Cap</h2>
+        <div class="field">
+          <label class="field-label" for="s-daily-cap">Max hours per day (1–24)</label>
+          <input type="number" id="s-daily-cap" class="field-input" min="1" max="24" step=".5" value="8">
+        </div>
+        <button class="btn-primary" id="btn-save-settings">Save Settings</button>
+      </div>
+      <div class="card card-pad">
+        <h2 class="settings-title">Label Registry</h2>
+        <ul class="tag-list" id="tag-list" role="list"></ul>
+        <div class="add-tag-row">
+          <input type="text" id="new-tag-name" class="field-input" placeholder="Tag name…" aria-label="New tag name" maxlength="24">
+          <input type="color" id="new-tag-color" value="#14b8a6" aria-label="Tag colour">
+          <button class="btn-sm" id="btn-add-tag">+ Add</button>
+        </div>
+      </div>
+      <div class="card card-pad">
+        <h2 class="settings-title">Data Management</h2>
+        <p style="font-size:.82rem;color:var(--muted);margin-bottom:.75rem">Export your data as JSON or import from a previous backup.</p>
+        <div class="io-row">
+          <button class="btn-outline" id="btn-export">⬇ Export JSON</button>
+          <button class="btn-outline" id="btn-import">⬆ Import JSON</button>
+          <input type="file" id="import-file" accept=".json" class="sr-only">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" aria-labelledby="about-title" hidden>
+
+    <!-- Hero -->
+    <div class="about-hero">
+      <h1 class="about-manifesto-title" id="about-title">THE MANIFESTO.</h1>
+      <p class="about-headline">Sustainable High Performance Requires Radical Self-Awareness.</p>
+      <p class="about-text">Campus Flow harmonizes professional rigor with human well-being.</p>
+    </div>
+
+    <!-- Three pillars -->
+    <div class="principles-grid">
+      <article class="card principle-card">
+        <div class="principle-icon" style="background:rgba(20,184,166,.12)">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <h2 class="principle-title">Capacity Awareness</h2>
+        <p class="principle-text">Time is a finite resource. By logging sessions rather than just tasks, you account for the energy required to maintain flow without over-extension.</p>
+      </article>
+      <article class="card principle-card">
+        <div class="principle-icon" style="background:rgba(249,115,22,.12)">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <h2 class="principle-title">Workload Intensity</h2>
+        <p class="principle-text">The Heat Bar provides real-time visual cues based on your daily capacity, signaling when it's time to push and when you've hit your human limit.</p>
+      </article>
+      <article class="card principle-card">
+        <div class="principle-icon" style="background:rgba(239,68,68,.1)">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h2 class="principle-title">Registry Integrity</h2>
+        <p class="principle-text">Accountability is built into the OS. Mandatory justifications for cancellations encourage reflection on why plan shifts occur.</p>
+      </article>
+    </div>
+
+    <!-- Rationale + Creator side by side -->
+    <div class="about-mid-row">
+
+      <div class="card card-pad about-rationale-card">
+        <p class="about-section-label">The Rationale</p>
+        <p class="about-rationale-text">Most planning tools view humans as "output machines." Campus Flow flips the script by focusing on <strong>energy management</strong> over task completion.</p>
+        <p class="about-rationale-text" style="margin-top:.75rem">By tracking three core pillars — <strong>Academic</strong>, <strong>Professional</strong>, and <strong>Social</strong> — we ensure that your professional development doesn't come at the cost of your human equilibrium.</p>
+      </div>
+
+      <div class="card creator-card">
+        <div class="creator-inner">
+          <img src="./assets/creator.png" alt="Photo of Cedric Hirwa" class="creator-avatar"
+               onerror="this.style.display='none';document.getElementById('creator-initials').style.display='flex'">
+          <div id="creator-initials" style="width:72px;height:72px;border-radius:16px;background:var(--navy);display:none;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--f-head);font-weight:800;font-size:1.4rem;color:var(--teal)" aria-hidden="true">CH</div>
+          <div>
+            <p class="creator-name">Cedric Hirwa</p>
+            <p class="creator-role">HR Professional &amp; Architect</p>
+            <p class="creator-bio">Cedric is an HR professional with 4+ years in corporate culture development. He built Campus Flow to translate professional wisdom into a personal tool for growth.</p>
+            <div class="creator-links">
+              <a href="mailto:c.havugiman@alustudent.com">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                c.havugiman@alustudent.com
+              </a>
+              <a href="https://github.com/CediHirwa" target="_blank" rel="noopener noreferrer">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                CediHirwa
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Ecosystem -->
+    <div class="card card-pad" style="margin-top:1.25rem">
+      <p class="about-section-label">Growth &amp; Wellness Ecosystem</p>
+      <div class="ecosystem-grid">
+        <div class="ecosystem-card">
+          <div class="ecosystem-icon" style="background:rgba(20,184,166,.1)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+          </div>
+          <div>
+            <p class="ecosystem-title">Mental Health Hub</p>
+            <p class="ecosystem-text">Access the PIH MH Matrix for academic stress management and mental clarity tools.</p>
+            <a class="ecosystem-tag" href="https://www.pih.org/MHMatrix" target="_blank" rel="noopener noreferrer">VISIT LIBRARY →</a>
+          </div>
+        </div>
+        <div class="ecosystem-card">
+          <div class="ecosystem-icon" style="background:rgba(249,115,22,.1)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+          </div>
+          <div>
+            <p class="ecosystem-title">Career Planning</p>
+            <p class="ecosystem-text">Frameworks for setting milestones aligned with your professional identity and goals.</p>
+            <a class="ecosystem-tag" href="https://personality.co/career-test" target="_blank" rel="noopener noreferrer">FUTURE MAPPING →</a>
+          </div>
+        </div>
+        <div class="ecosystem-card">
+          <div class="ecosystem-icon" style="background:rgba(34,197,94,.1)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          </div>
+          <div>
+            <p class="ecosystem-title">Academic Rigor</p>
+            <p class="ecosystem-text">Maintain competitiveness while preserving a relaxed and sustainable study environment.</p>
+            <a class="ecosystem-tag" href="https://www.thethinkacademy.com/blog/edubriefs-academic-competitiveness-relaxed-environment/" target="_blank" rel="noopener noreferrer">LEARN MORE →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<footer class="site-footer" role="contentinfo">
+  <p>Campus Flow &copy; 2026 · Built with intention · <a href="#about" onclick="event.preventDefault();document.querySelector('[data-view=about]').click()">About</a></p>
+</footer>
+
+<!-- ACTIVITY MODAL -->
+<dialog id="activity-dialog" aria-labelledby="modal-title">
+  <div class="modal-header">
+    <h2 class="modal-title" id="modal-title">New Activity</h2>
+    <button class="modal-close" id="modal-close" aria-label="Close">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form id="activity-form" novalidate>
+      <input type="hidden" id="edit-id">
+
+      <div class="field">
+        <label class="field-label" for="f-title">Title *</label>
+        <input type="text" id="f-title" class="field-input" placeholder="e.g. Physics Revision" maxlength="120" required aria-describedby="err-title">
+        <span class="field-error" id="err-title" role="alert" hidden></span>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label" for="f-date">Due Date *</label>
+          <input type="date" id="f-date" class="field-input" required aria-describedby="err-dueDate">
+          <span class="field-error" id="err-dueDate" role="alert" hidden></span>
+        </div>
+        <div class="field">
+          <label class="field-label" for="f-duration">Duration (hours) *</label>
+          <input type="number" id="f-duration" class="field-input" placeholder="e.g. 1.5" min="0.1" max="24" step="0.1" required aria-describedby="err-duration">
+          <span class="field-error" id="err-duration" role="alert" hidden></span>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label" for="f-tag">Label</label>
+          <select id="f-tag" class="field-input"><option>Academic</option></select>
+        </div>
+        <div class="field">
+          <label class="field-label" for="f-status">Status</label>
+          <select id="f-status" class="field-input">
+            <option value="not-started">Not Started</option>
+            <option value="in-progress">In Progress</option>
+            <option value="completed">Completed</option>
+            <option value="canceled">Canceled</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="f-notes">Notes</label>
+        <textarea id="f-notes" class="field-input" rows="3" placeholder="Any additional context…"></textarea>
+      </div>
+
+      <label class="urgent-check-wrap">
+        <input type="checkbox" id="f-urgent">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+        <span class="urgent-check-label">Flag as Urgent</span>
+      </label>
+
+      <button type="submit" class="btn-submit">Save Activity</button>
+    </form>
+  </div>
+</dialog>
+
+<!-- DAY DETAIL OVERLAY -->
+<dialog id="day-overlay" aria-labelledby="day-overlay-title">
+  <div class="overlay-header">
+    <h2 class="overlay-date-title" id="day-overlay-title">Monday, January 1</h2>
+    <button class="overlay-close" id="day-overlay-close" aria-label="Close">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="overlay-body" id="day-overlay-list" role="list"></div>
+  <div class="overlay-footer">
+    <button class="btn-primary" id="day-overlay-add">+ Add Activity This Day</button>
+  </div>
+</dialog>
+
+<script>
+  document.getElementById('date-display').textContent =
+    new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+</script>
+<script type="module" src="./scripts/app.js"></script>
+</body>
+</html>

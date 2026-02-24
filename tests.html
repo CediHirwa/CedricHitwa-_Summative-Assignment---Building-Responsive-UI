@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Flow — Test Suite</title>
+  <style>
+    :root {
+      --pass: #16a34a; --fail: #dc2626;
+      --pass-bg: #dcfce7; --fail-bg: #fee2e2;
+      --border: #e2e8f0; --navy: #0f172a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #f8fafc; color: var(--navy);
+      padding: 2rem; line-height: 1.6;
+    }
+    h1 { font-size: 2rem; font-weight: 800; margin-bottom: .5rem; }
+    h2 { font-size: 1.1rem; font-weight: 700; margin: 2rem 0 .75rem; color: #475569; border-bottom: 1px solid var(--border); padding-bottom: .4rem; }
+    .summary {
+      display: flex; gap: 1rem; align-items: center;
+      background: white; border: 1px solid var(--border);
+      border-radius: 12px; padding: 1rem 1.5rem;
+      margin: 1rem 0 1.5rem; font-weight: 700;
+    }
+    .pass-count { color: var(--pass); }
+    .fail-count { color: var(--fail); }
+    .test {
+      display: flex; align-items: flex-start; gap: .75rem;
+      padding: .6rem .75rem; border-radius: 8px; margin-bottom: .4rem;
+      font-size: .88rem;
+    }
+    .test.pass { background: var(--pass-bg); }
+    .test.fail { background: var(--fail-bg); }
+    .badge {
+      flex-shrink: 0; font-weight: 800; font-size: .7rem;
+      padding: .15rem .5rem; border-radius: 4px; letter-spacing: .05em;
+    }
+    .badge.pass { background: var(--pass); color: white; }
+    .badge.fail { background: var(--fail); color: white; }
+    .test-desc { flex: 1; }
+    .test-input { font-family: monospace; background: rgba(0,0,0,.08); padding: .1rem .4rem; border-radius: 3px; }
+    .test-note { font-size: .75rem; color: #64748b; margin-top: .2rem; }
+    .run-btn {
+      background: var(--navy); color: white; border: none;
+      padding: .6rem 1.5rem; border-radius: 50px; cursor: pointer;
+      font-weight: 700; font-size: .85rem; margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Campus Flow — Regex Test Suite</h1>
+<p>Verifying <strong>Milestone 3</strong> requirements: Advanced patterns, safety, and highlighting.</p>
+<button class="run-btn" onclick="runAll()">▶ Run All Tests</button>
+
+<div class="summary" id="summary" aria-live="polite">
+  <span>Click "Run All Tests" to begin.</span>
+</div>
+
+<div id="results"></div>
+
+<script type="module">
+  // Aligned with your specific filenames and exports
+  import { 
+    validateTitle, validateDuration, validateDate, validateTag, PATTERNS 
+  } from './scripts/validators.js';
+  
+  import { compileRegex, highlight, filterRecords } from './scripts/search.js';
+
+  let passed = 0, failed = 0;
+  const groups = [];
+
+  function group(name, fn) { groups.push({ name, fn }); }
+  function assert(desc, actual, expected) {
+    const ok = actual === expected;
+    return { desc, actual, expected, ok };
+  }
+
+  // ── TEST GROUPS ───────────────────────────────────────────────
+
+  group('Rule 1: Title Validation (Lookahead & Back-reference)', () => [
+    assert('Valid: "Physics Revision"', validateTitle('Physics Revision'), null),
+    assert('Invalid: Leading space', validateTitle(' Leading space') !== null, true),
+    assert('Invalid (Lookahead): "12345" (No letters)', validateTitle('12345') !== null, true),
+    assert('Invalid (Back-reference): "study study"', validateTitle('study study') !== null, true),
+  ]);
+
+  group('Rule 2: Duration (Numeric Patterns)', () => [
+    assert('Valid: "1.5"', validateDuration('1.5'), null),
+    assert('Valid: "8"', validateDuration('8'), null),
+    assert('Invalid: "abc"', validateDuration('abc') !== null, true),
+    assert('Invalid: "25" (Over cap)', validateDuration('25') !== null, true),
+  ]);
+
+  group('Rule 3: Date (YYYY-MM-DD)', () => [
+    assert('Valid: "2026-02-24"', validateDate('2026-02-24'), null),
+    assert('Invalid: "24-02-2026"', validateDate('24-02-2026') !== null, true),
+    assert('Invalid: "2026-13-01"', validateDate('2026-13-01') !== null, true),
+  ]);
+
+  group('Search Logic: Safety & Highlighting', () => [
+    assert('Safe Compiler: Invalid regex "[" returns null', compileRegex('[', 'i'), null),
+    assert('Highlighting: Wraps match in <mark>', 
+      highlight('Physics Study', /Physics/i), 
+      '<mark class="search-mark">Physics</mark> Study'),
+    assert('XSS Prevention: Escapes <script>', 
+      highlight('<script>', null), '&lt;script&gt;')
+  ]);
+
+  group('Advanced Pattern: Time Tokens', () => {
+    // Helper to test your timeToken regex from validators.js
+    const testTime = (str) => PATTERNS.timeToken.test(str);
+    return [
+      assert('Detects "09:00"', testTime('Meet at 09:00'), true),
+      assert('Detects "23:59"', testTime('End at 23:59'), true),
+      assert('Rejects "25:00"', testTime('At 25:00'), false)
+    ];
+  });
+
+  // ── RUNNER ────────────────────────────────────────────────────
+
+  window.runAll = function() {
+    passed = 0; failed = 0;
+    const resultsEl = document.getElementById('results');
+    resultsEl.innerHTML = '';
+
+    groups.forEach(({ name, fn }) => {
+      const tests = fn();
+      const section = document.createElement('div');
+      section.innerHTML = `<h2>${name}</h2>`;
+
+      tests.forEach(t => {
+        if (t.ok) passed++; else failed++;
+        const div = document.createElement('div');
+        div.className = `test ${t.ok ? 'pass' : 'fail'}`;
+        div.innerHTML = `
+          <span class="badge ${t.ok ? 'pass' : 'fail'}">${t.ok ? 'PASS' : 'FAIL'}</span>
+          <div class="test-desc">
+            ${t.desc}
+            ${!t.ok ? `<div class="test-note">Got: ${JSON.stringify(t.actual)} | Expected: ${JSON.stringify(t.expected)}</div>` : ''}
+          </div>`;
+        section.appendChild(div);
+      });
+      resultsEl.appendChild(section);
+    });
+
+    document.getElementById('summary').innerHTML = `
+      <span class="pass-count">✅ ${passed} Pass</span>
+      <span class="fail-count">❌ ${failed} Fail</span>
+      <span>Total: ${passed + failed}</span>`;
+  };
+</script>
+</body>
+</html>
