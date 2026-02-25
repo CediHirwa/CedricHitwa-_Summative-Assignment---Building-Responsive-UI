@@ -1,6 +1,6 @@
 # Campus Flow — Academic Operating System
 
-**Live Demo:** [Watch the 3-Minute Demo Video](INSERT_YOUR_YOUTUBE_OR_DRIVE_LINK_HERE)
+**Live Demo:** [Watch the 3-Minute Demo Video](https://drive.google.com/file/d/1wmntqqXuAyCFyoReVyVQQupqWb2oQq9e/view?usp=sharing)
 
 **Live Site:** [https://cedihirwa.github.io/CedricHitwa-_Summative-Assignment---Building-Responsive-UI/](https://cedihirwa.github.io/CedricHitwa-_Summative-Assignment---Building-Responsive-UI/)
 
